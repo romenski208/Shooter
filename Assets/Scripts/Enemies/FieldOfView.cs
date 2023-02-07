@@ -19,7 +19,7 @@ public class FieldOfView : MonoBehaviour
         return hit.transform == _target; 
     }
 
-    bool RayToScan()
+    private bool RayToScan()
     {
         bool a = false;
         bool b = false;
@@ -30,18 +30,18 @@ public class FieldOfView : MonoBehaviour
             var x = Mathf.Sin(j);
             var y = Mathf.Cos(j);
 
-            j += +_angle * Mathf.Deg2Rad / _raysCount;
+            j += _angle * Mathf.Deg2Rad / _raysCount;
 
-            Vector3 dir = transform.TransformDirection(new Vector3(x, 0, y));
+            Vector3 direction = transform.TransformDirection(new Vector3(x, 0, y));
 
-            if (IsRayHitTarget(dir)) 
+            if (IsRayHitTarget(direction)) 
                 a = true;
 
             if (x != 0)
             {
-                dir = transform.TransformDirection(new Vector3(-x, 0, y));
+                direction = transform.TransformDirection(new Vector3(-x, 0, y));
 
-                if (IsRayHitTarget(dir)) 
+                if (IsRayHitTarget(direction)) 
                     b = true;
             }
         }
