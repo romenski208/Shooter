@@ -15,13 +15,13 @@ public class EnemyBehaivor : MonoBehaviour
     private void OnEnable()
     {
         _fieldOfHearing.PlayerDetected += OnPlayerDetected;
-        _fieldOfView.PlayerDetected += OnPlayerDetected;
+        // _fieldOfView.PlayerDetected += OnPlayerDetected;
     }
 
     private void OnDisable()
     {
         _fieldOfHearing.PlayerDetected -= OnPlayerDetected;
-        _fieldOfView.PlayerDetected -= OnPlayerDetected;
+        // _fieldOfView.PlayerDetected -= OnPlayerDetected;
     }
 
     private void OnPlayerDetected()
