@@ -1,69 +1,40 @@
+using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Events;
 
 public class FieldOfView : MonoBehaviour
 {
-    [SerializeField] public int _raysCount;
-    [SerializeField] public int _distance;
-    [SerializeField] public float _angle;
-    [SerializeField] public Transform _target;
-    [SerializeField] public NavMeshAgent _ai;
+	[SerializeField] private LayerMask _playerMask;
+	[SerializeField] private LayerMask _obstacleMask;
+	[SerializeField] private float _viewRadius;
+	[SerializeField] private float _viewAngle;
 
-    private bool IsRayHitTarget(Vector3 direction)
+	public event UnityAction PlayerDetected;
+
+    private void FixedUpdate()
     {
-        Physics.Raycast(transform.position, direction, out RaycastHit hit, _distance);
+		FindVisibleTargets();
+	}
 
-        return hit.transform == _target; 
-    }
+	private void FindVisibleTargets()
+	{
+		Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, _viewRadius, _playerMask);
 
-    private bool RayToScan()
-    {
-        bool a = false;
-        bool b = false;
-        float j = 0;
+		foreach (var target in targetsInViewRadius)
+		{
+			Vector3 directionToTarget = (target.transform.position - transform.position).normalized;
 
-        for (int i = 0; i < _raysCount; i++)
-        {
-            var x = Mathf.Sin(j);
-            var y = Mathf.Cos(j);
+			if (Vector3.Angle(transform.forward, directionToTarget) < _viewAngle / 2)
+			{
+				float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
 
-            j += _angle * Mathf.Deg2Rad / _raysCount;
-
-            Vector3 direction = transform.TransformDirection(new Vector3(x, 0, y));
-
-            if (IsRayHitTarget(direction)) 
-                a = true;
-
-            if (x != 0)
-            {
-                direction = transform.TransformDirection(new Vector3(-x, 0, y));
-
-                if (IsRayHitTarget(direction)) 
-                    b = true;
-            }
-        }
-
-        return (a || b);
-
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (_ai.enabled == true)
-            return;
-
-        if (RayToScan())
-        {
-            _ai.enabled = true;
-        }
-    }
-
-    private void Update()
-    {
-        if (_ai.enabled)
-            _ai.SetDestination(_target.position);
-    }
+				if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstacleMask) == false)
+				{
+					PlayerDetected?.Invoke();
+				}
+			}
+		}
+	}
 }
+
