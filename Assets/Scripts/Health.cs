@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class DamagableObject : MonoBehaviour
+public class Health : MonoBehaviour
 {
     [SerializeField] private float _durability;
     [SerializeField] private float _health;
 
     public float Durability => _durability;
+
+    public event UnityAction Overed;
 
     public void ApplyDamage(float damage)
     {
@@ -18,7 +21,7 @@ public class DamagableObject : MonoBehaviour
 
         if (_health < 0)
         {
-            Destroy(gameObject);
+            Overed?.Invoke();
         }
     }
 }

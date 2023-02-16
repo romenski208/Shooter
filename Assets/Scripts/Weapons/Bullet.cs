@@ -61,7 +61,7 @@ public class Bullet : MonoBehaviour
 
             foreach (var hit in hits)
             {
-                if (hit.TryGetComponent(out DamagableObject damageableObject))
+                if (hit.TryGetComponent(out Health damageableObject))
                 {
                     damageableObject.ApplyDamage(shotPower);
                     shotPower -= damageableObject.Durability;
